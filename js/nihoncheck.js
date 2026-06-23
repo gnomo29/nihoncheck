@@ -1643,6 +1643,10 @@
     try {
       localStorage.setItem(CLAVE_PERFIL, JSON.stringify(normalizarPerfil(perfil)));
     } catch (e) { /* noop */ }
+    // Sync opcional con Firestore si hay sesión (no bloquea; falla en silencio sin Firebase)
+    if (window.NihonCheckFirestore && window.NihonCheckFirestore.syncPerfilIfLoggedIn) {
+      window.NihonCheckFirestore.syncPerfilIfLoggedIn();
+    }
   };
 
   NihonCheck.obtenerDominio = function () {

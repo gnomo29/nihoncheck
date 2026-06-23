@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "term": "学校",
+  "word": "学校",
+  "readings": ["がっこう"],
+  "meanings": ["school"],
+  "translationEs": "escuela",
+  "jlpt": "jlpt-n5",
+  "tags": ["Noun"],
+  "confidence": 0.93,
+  "confidenceLevel": "alta",
+  "sources": ["jisho", "kuromoji", "tatoeba"],
+  "tokens": [
+    { "surface": "学校", "reading": "ガッコウ", "basic": "学校", "pos": "名詞" }
+  ],
+  "examples": [
+    {
+      "japanese": "学校へ行きます。",
+      "translation": "I go to school.",
+      "id": 12345
+    }
+  ],
+  "kanjiSvgs": [
+    { "char": "学", "url": "https://raw.githubusercontent.com/KanjiVG/kanjivg/master/kanji/05b66.svg" },
+    { "char": "校", "url": "https://raw.githubusercontent.com/KanjiVG/kanjivg/master/kanji/06821.svg" }
+  ],
+  "jisho": {
+    "slug": "学校",
+    "url": "https://jisho.org/word/学校",
+    "rawCount": 3
+  },
+  "furigana": "<ruby>学校<rt>がっこう</rt></ruby>"
+}

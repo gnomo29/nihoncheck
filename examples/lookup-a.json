@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "term": "あ",
+  "word": "あ",
+  "readings": ["あ"],
+  "meanings": ["Ah!", "Oh!", "Ahh"],
+  "translationEs": null,
+  "jlpt": "jlpt-n5",
+  "tags": ["Usually written using kana alone", "Interjection (kandoushi)"],
+  "confidence": 0.82,
+  "confidenceLevel": "alta",
+  "sources": ["jisho", "kuromoji"],
+  "tokens": [
+    { "surface": "あ", "reading": "ア", "basic": "あ", "pos": "感動詞" }
+  ],
+  "examples": [],
+  "kanjiSvgs": [],
+  "jisho": {
+    "slug": "あ",
+    "url": "https://jisho.org/word/あ",
+    "rawCount": 5
+  },
+  "furigana": "あ"
+}

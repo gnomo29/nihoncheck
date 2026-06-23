@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#c0392b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>NihonCheck — Diagnóstico rápido</title>
+  <link rel="stylesheet" href="styles.css?v=39">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('nihoncheck_theme') === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) { /* sin localStorage */ }
+    })();
+  </script>
+</head>
+<body class="diagnostico-body">
+
+  <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Cambiar a modo oscuro" aria-pressed="false" title="Modo oscuro">🌙</button>
+
+  <main class="diagnostico-shell">
+    <header class="diagnostico-header">
+      <a href="index.html" class="diagnostico-header__link">← Volver</a>
+      <span class="diagnostico-header__marca">NihonCheck</span>
+    </header>
+
+    <div id="diagnostico-app" class="diagnostico-app" aria-live="polite"></div>
+  </main>
+
+  <script src="https://browser.sentry-cdn.com/8.47.0/bundle.min.js" crossorigin="anonymous"></script>
+  <script src="js/sentry-config.js?v=39"></script>
+  <script src="js/sentryInit.js?v=39"></script>
+  <script src="js/temas.js?v=39"></script>
+  <script src="js/lecciones.js?v=39"></script>
+  <script src="js/rutaPersonalizada.js?v=39"></script>
+  <script src="js/nihoncheck.js?v=39"></script>
+  <script src="js/diagnostico.js?v=39"></script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!--
+  Plantilla de referencia — tarjeta de palabra (lookup NihonCheck).
+  Renderizado real: src/ui/wordCard.js (ESM) y js/lookupClient.js (navegador).
+
+  JSON esperado (API o simplificado):
+  {
+    "term": "学校",
+    "kanji": "学校",
+    "reading": "がっこう",
+    "meanings": ["escuela; colegio"],
+    "examples": [{"japanese":"学校へ行きます。","english":"Voy a la escuela.","source":"tatoeba","url":"https://..."}],
+    "kanjiSvgUrl": "https://.../05b66.svg",
+    "confidence": 0.92,
+    "confidenceLabel": "alta",
+    "sources": ["jisho","tatoeba"]
+  }
+-->
+<article class="word-card" data-term="学校">
+  <header class="word-card__header">
+    <h3 class="word-card__term word-card__ruby">
+      <ruby>学校<rt>がっこう</rt></ruby>
+    </h3>
+    <span class="confidence-badge confidence-badge--alta" title="Confianza: 92%">
+      Alta
+    </span>
+  </header>
+
+  <div class="word-card__kanji-svgs" aria-label="Trazos de kanji">
+    <div class="kanji-stroke-viewer" data-kanji="学" data-svg-url="https://raw.githubusercontent.com/KanjiVG/kanjivg/master/kanji/05b66.svg">
+      <span class="kanji-stroke-viewer__label" aria-hidden="true">学</span>
+      <div class="kanji-stroke-viewer__stage" role="img" aria-label="Orden de trazos de 学"></div>
+      <button type="button" class="kanji-stroke-viewer__toggle" data-playing="false">Reproducir</button>
+      <p class="kanji-stroke-viewer__error" hidden>Sin orden de trazos</p>
+    </div>
+    <div class="kanji-stroke-viewer" data-kanji="校" data-svg-url="https://raw.githubusercontent.com/KanjiVG/kanjivg/master/kanji/06821.svg">
+      <span class="kanji-stroke-viewer__label" aria-hidden="true">校</span>
+      <div class="kanji-stroke-viewer__stage" role="img" aria-label="Orden de trazos de 校"></div>
+      <button type="button" class="kanji-stroke-viewer__toggle" data-playing="false">Reproducir</button>
+      <p class="kanji-stroke-viewer__error" hidden>Sin orden de trazos</p>
+    </div>
+  </div>
+
+  <dl class="word-card__meta">
+    <div class="word-card__row">
+      <dt>Lecturas</dt>
+      <dd>がっこう</dd>
+    </div>
+    <div class="word-card__row">
+      <dt>Significados</dt>
+      <dd>escuela; colegio</dd>
+    </div>
+    <div class="word-card__row">
+      <dt>Fuentes</dt>
+      <dd class="word-card__sources">
+        <span class="word-card__source-tag">Jisho</span>
+        <span class="word-card__source-tag">Tatoeba</span>
+      </dd>
+    </div>
+  </dl>
+
+  <section class="word-card__examples-block" aria-label="Ejemplos">
+    <h4 class="word-card__examples-title">Ejemplos</h4>
+    <ul class="word-card__examples">
+      <li>
+        <span class="word-card__ex-jp">学校へ行きます。</span>
+        <span class="word-card__ex-tr">Voy a la escuela.</span>
+        <a class="word-card__ex-link" href="https://tatoeba.org" target="_blank" rel="noopener">Tatoeba</a>
+      </li>
+    </ul>
+  </section>
+
+  <footer class="word-card__actions">
+    <a class="word-card__btn word-card__btn--jisho" href="https://jisho.org/word/学校" target="_blank" rel="noopener">
+      Ver en Jisho
+    </a>
+    <button type="button" class="word-card__btn word-card__btn--report" data-action="reportar-lookup">
+      Reportar error
+    </button>
+  </footer>
+</article>

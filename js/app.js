@@ -34,6 +34,12 @@
 
   var debouncePreview = null;
 
+  var CLAVE_BANNER_DIAG_OCULTO = 'nihoncheck_banner_diag_oculto';
+
+  var CLAVE_THEME = 'nihoncheck_theme';
+
+  var NA = window.NihonCheckAuth;
+
 
 
   var views = {};
@@ -48,6 +54,74 @@
 
 
 
+  function obtenerTemaGuardado() {
+
+    try {
+
+      return localStorage.getItem(CLAVE_THEME) === 'dark' ? 'dark' : 'light';
+
+    } catch (e) {
+
+      return 'light';
+
+    }
+
+  }
+
+
+
+  function aplicarTema(tema) {
+
+    var esOscuro = tema === 'dark';
+
+    if (esOscuro) {
+
+      document.documentElement.setAttribute('data-theme', 'dark');
+
+    } else {
+
+      document.documentElement.removeAttribute('data-theme');
+
+    }
+
+    var btn = $('theme-toggle');
+
+    if (btn) {
+
+      btn.setAttribute('aria-label', esOscuro ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
+
+      btn.setAttribute('aria-pressed', esOscuro ? 'true' : 'false');
+
+      btn.title = esOscuro ? 'Modo claro' : 'Modo oscuro';
+
+      btn.textContent = esOscuro ? '☀️' : '🌙';
+
+    }
+
+  }
+
+
+
+  function alternarTema() {
+
+    var nuevo = obtenerTemaGuardado() === 'dark' ? 'light' : 'dark';
+
+    try { localStorage.setItem(CLAVE_THEME, nuevo); } catch (e) { /* ignore */ }
+
+    aplicarTema(nuevo);
+
+  }
+
+
+
+  function initTema() {
+
+    aplicarTema(obtenerTemaGuardado());
+
+  }
+
+
+
   function mostrarToast(msg) {
 
     if (!el.toast) return;
@@ -59,6 +133,224 @@
     clearTimeout(mostrarToast._t);
 
     mostrarToast._t = setTimeout(function () { el.toast.setAttribute('hidden', ''); }, 2800);
+
+  }
+
+
+
+  function mostrarErrorAuth(msg) {
+
+    var err = $('auth-error');
+
+    if (!err) return;
+
+    if (msg) {
+
+      err.textContent = msg;
+
+      err.removeAttribute('hidden');
+
+    } else {
+
+      err.textContent = '';
+
+      err.setAttribute('hidden', '');
+
+    }
+
+  }
+
+
+
+  function actualizarUiAuth(user) {
+
+    var form = $('form-auth');
+
+    var estado = $('auth-estado');
+
+    var emailVisible = $('auth-email-visible');
+
+    var btn = $('auth-toggle');
+
+    var logueado = !!(user && user.email);
+
+    if (btn) {
+
+      btn.title = logueado ? ('Cuenta: ' + user.email) : 'Cuenta';
+
+      btn.classList.toggle('auth-toggle--active', logueado);
+
+    }
+
+    if (form) form.hidden = logueado;
+
+    if (estado) estado.hidden = !logueado;
+
+    if (emailVisible && logueado) emailVisible.textContent = user.email;
+
+  }
+
+
+
+  function initFirebaseAuth() {
+
+    if (!NA) return;
+
+    var config = window.NIHONCHECK_FIREBASE_CONFIG;
+
+    if (!NA.initFirebase(config)) return;
+
+    NA.onAuthStateChanged(function (user) {
+
+      actualizarUiAuth(user);
+
+    });
+
+    document.addEventListener('nihoncheck-firestore-migrated', function (ev) {
+
+      var n = ev && ev.detail ? ev.detail.migrated : 0;
+
+      if (n > 0) mostrarToast('Progreso sincronizado con tu cuenta (' + n + ' bloques)');
+
+    });
+
+    var formAuth = $('form-auth');
+
+    if (formAuth) {
+
+      formAuth.addEventListener('submit', function (e) {
+
+        e.preventDefault();
+
+        if (!NA.isAvailable()) {
+
+          mostrarErrorAuth('Firebase no está configurado. Copia js/firebase-config.example.js → js/firebase-config.js');
+
+          return;
+
+        }
+
+        mostrarErrorAuth('');
+
+        var email = (formAuth.email && formAuth.email.value || '').trim();
+
+        var password = formAuth.password ? formAuth.password.value : '';
+
+        NA.login(email, password).then(function () {
+
+          mostrarToast('Sesión iniciada');
+
+          cerrarModal('modal-auth');
+
+        }).catch(function (err) {
+
+          mostrarErrorAuth(NA.traducirError(err));
+
+        });
+
+      });
+
+    }
+
+  }
+
+
+
+  function manejarAuthAccion(a) {
+
+    if (!NA || !NA.isAvailable()) {
+
+      if (a === 'abrir-auth') {
+
+        mostrarToast('Inicio de sesión no disponible (Firebase sin configurar)');
+
+      }
+
+      return;
+
+    }
+
+    var user = NA.getCurrentUser();
+
+    if (a === 'auth-register') {
+
+      var form = $('form-auth');
+
+      if (!form) return;
+
+      mostrarErrorAuth('');
+
+      var email = (form.email && form.email.value || '').trim();
+
+      var password = form.password ? form.password.value : '';
+
+      NA.register(email, password).then(function () {
+
+        mostrarToast('Cuenta creada');
+
+        cerrarModal('modal-auth');
+
+      }).catch(function (err) {
+
+        mostrarErrorAuth(NA.traducirError(err));
+
+      });
+
+      return;
+
+    }
+
+    if (a === 'auth-logout') {
+
+      NA.logout().then(function () {
+
+        mostrarToast('Sesión cerrada');
+
+        cerrarModal('modal-auth');
+
+      });
+
+      return;
+
+    }
+
+    if (a === 'auth-sync' && user) {
+
+      NA.migrateLocalToFirestore(user.uid).then(function () {
+
+        mostrarToast('Perfil sincronizado con la nube');
+
+      }).catch(function (err) {
+
+        mostrarErrorAuth(NA.traducirError(err));
+
+      });
+
+      return;
+
+    }
+
+    if (a === 'auth-cargar' && user) {
+
+      NA.loadAllFromFirestore(user.uid, { strategy: 'merge' }).then(function (res) {
+
+        mostrarToast('Datos cargados (' + res.aplicados + ' bloques)');
+
+        actualizarContadores();
+
+        actualizarHintsCamino();
+
+        refrescarDashboardSiVisible();
+
+        if (NihonCheck.srs && NihonCheck.srs.inicializarSRS) NihonCheck.srs.inicializarSRS();
+
+      }).catch(function (err) {
+
+        mostrarErrorAuth(NA.traducirError(err));
+
+      });
+
+    }
 
   }
 
@@ -178,7 +470,11 @@
 
     if (hint) {
 
-      if (perfil && perfil.recomendaciones && perfil.recomendaciones.length) {
+      if (perfil && perfil.nivelActual && perfil.nivelActual > 1) {
+
+        hint.textContent = 'Punto sugerido · Nivel ' + perfil.nivelActual;
+
+      } else if (perfil && perfil.recomendaciones && perfil.recomendaciones.length) {
 
         var rec = perfil.recomendaciones[0];
 
@@ -209,6 +505,74 @@
         : 'Personaliza tu ruta de estudio';
 
     }
+
+  }
+
+
+
+  function debeMostrarBannerDiagnostico() {
+
+    if (NC.diagnosticoEstaCompletado && NC.diagnosticoEstaCompletado()) return false;
+
+    var usuario = NC.obtenerUsuario ? NC.obtenerUsuario() : {};
+
+    if (usuario.empezoDesdeCero || usuario.inicioDesdeCero) return false;
+
+    if (NC.esUsuarioNuevo && NC.esUsuarioNuevo()) return false;
+
+    try {
+
+      if (sessionStorage.getItem(CLAVE_BANNER_DIAG_OCULTO) === '1') return false;
+
+    } catch (e) { /* noop */ }
+
+    return true;
+
+  }
+
+
+
+  function actualizarBannerDiagnostico() {
+
+    var banner = $('diagnostico-banner');
+
+    if (!banner) return;
+
+    if (debeMostrarBannerDiagnostico()) {
+
+      banner.removeAttribute('hidden');
+
+    } else {
+
+      banner.setAttribute('hidden', '');
+
+    }
+
+  }
+
+
+
+  function irDiagnosticoRapido() {
+
+    cerrarModal('modal-nuevo');
+
+    window.location.href = 'diagnostico.html';
+
+  }
+
+
+
+  function cerrarDiagnosticoBanner() {
+
+    try {
+
+      sessionStorage.setItem(CLAVE_BANNER_DIAG_OCULTO, '1');
+
+    } catch (e) { /* noop */ }
+
+    var banner = $('diagnostico-banner');
+
+    if (banner) banner.setAttribute('hidden', '');
 
   }
 
@@ -716,6 +1080,100 @@
 
 
 
+  function exportarBackupLocal() {
+
+    var BR = window.NihonCheckBackup;
+
+    if (!BR || !BR.exportBackup) {
+
+      mostrarToast('La función de backup no está disponible.');
+
+      return;
+
+    }
+
+    BR.exportBackup();
+
+    mostrarToast('Backup exportado.');
+
+  }
+
+
+
+  function solicitarImportarBackup() {
+
+    var input = $('input-backup-import');
+
+    if (!input) return;
+
+    input.value = '';
+
+    input.click();
+
+  }
+
+
+
+  function manejarArchivoBackup(ev) {
+
+    var file = ev.target.files && ev.target.files[0];
+
+    if (!file) return;
+
+    var BR = window.NihonCheckBackup;
+
+    if (!BR || !BR.importBackup) {
+
+      mostrarToast('La función de backup no está disponible.');
+
+      return;
+
+    }
+
+    var msg = '¿Importar este backup? Se sobrescribirán tu perfil, biblioteca y progreso SRS en este dispositivo.';
+
+    if (!window.confirm(msg)) {
+
+      ev.target.value = '';
+
+      return;
+
+    }
+
+    BR.importBackup(file).then(function (res) {
+
+      ev.target.value = '';
+
+      if (!res.ok) {
+
+        var texto = (res.errors && res.errors.length) ? res.errors[0] : 'Backup no válido.';
+
+        mostrarToast(texto);
+
+        return;
+
+      }
+
+      actualizarContadores();
+
+      actualizarHintsCamino();
+
+      actualizarBannerDiagnostico();
+
+      actualizarBannerRepaso();
+
+      refrescarDashboardSiVisible();
+
+      if (NC.srs && NC.srs.inicializarSRS) NC.srs.inicializarSRS();
+
+      mostrarToast('Backup importado correctamente.');
+
+    });
+
+  }
+
+
+
   function reiniciarProgresoCompleto() {
 
     if (!window.confirm('¿Reiniciar todo el progreso? Se conservará tu biblioteca personal.')) return;
@@ -952,7 +1410,21 @@
 
 
 
+  function initSentryApp() {
+    var sentry = window.NihonCheckSentry;
+    if (!sentry || !sentry.initSentry) return;
+    if (sentry.isEnabled && sentry.isEnabled()) return;
+    var cfg = window.NIHONCHECK_SENTRY_CONFIG || {};
+    sentry.initSentry(cfg.dsn || '', { environment: cfg.environment });
+  }
+
+
+
   function init() {
+
+    try {
+
+      initSentryApp();
 
     views = {
 
@@ -1030,9 +1502,17 @@
 
 
 
+    initTema();
+
+    initFirebaseAuth();
+
+
+
     actualizarContadores();
 
     actualizarHintsCamino();
+
+    actualizarBannerDiagnostico();
 
 
 
@@ -1090,6 +1570,16 @@
 
 
 
+    var inputBackup = $('input-backup-import');
+
+    if (inputBackup) {
+
+      inputBackup.addEventListener('change', manejarArchivoBackup);
+
+    }
+
+
+
     // FASE 1b: inicializar el sistema de Repetición Espaciada (SRS).
 
     // Idempotente: migra la biblioteca solo la primera vez.
@@ -1103,6 +1593,16 @@
 
 
     showView('home');
+
+    } catch (err) {
+
+      if (window.NihonCheckSentry && window.NihonCheckSentry.captureException) {
+        window.NihonCheckSentry.captureException(err, { scope: 'app.init' });
+      }
+
+      throw err;
+
+    }
 
   }
 
@@ -1146,9 +1646,47 @@
 
       if (a === 'modal-saltar-desde-cero') { saltarDiagnosticoIniciarDesdeCero(); return; }
 
+      if (a === 'ir-diagnostico-rapido') { irDiagnosticoRapido(); return; }
+
+      if (a === 'cerrar-diagnostico-banner') { cerrarDiagnosticoBanner(); return; }
+
+      if (a === 'toggle-theme') { alternarTema(); return; }
+
+      if (a === 'abrir-auth') {
+
+        mostrarErrorAuth('');
+
+        if (!NA || !NA.isAvailable()) {
+
+          mostrarErrorAuth('Firebase no está configurado. Copia js/firebase-config.example.js → js/firebase-config.js y rellena tus claves.');
+
+        }
+
+        abrirModal('modal-auth');
+
+        actualizarUiAuth(NA && NA.getCurrentUser ? NA.getCurrentUser() : null);
+
+        return;
+
+      }
+
+      if (a === 'cerrar-auth') { cerrarModal('modal-auth'); return; }
+
+      if (a === 'auth-register' || a === 'auth-logout' || a === 'auth-sync' || a === 'auth-cargar') {
+
+        manejarAuthAccion(a);
+
+        return;
+
+      }
+
       if (a === 'repetir-diagnostico') { repetirDiagnostico(); return; }
 
       if (a === 'reiniciar-progreso') { reiniciarProgresoCompleto(); return; }
+
+      if (a === 'exportar-backup') { exportarBackupLocal(); return; }
+
+      if (a === 'importar-backup') { solicitarImportarBackup(); return; }
 
       if (a === 'continuar-aprender') { irAprender(); return; }
 
@@ -1257,6 +1795,14 @@
       if (a === 'back-camino' || nav === 'camino') { irCaminoDesdeVista(); return; }
 
       if (a === 'cancelar-test') { cancelarTestNivel(); return; }
+
+      if (a === 'reintentar') {
+        var tcReintentar = obtenerContenedorTest();
+        if (tcReintentar && NC.iniciarExamen) {
+          NC.iniciarExamen(tcReintentar, null, NC._opcionesExamenActual || null);
+        }
+        return;
+      }
 
 
 

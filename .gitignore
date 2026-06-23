@@ -4,6 +4,14 @@ Thumbs.db
 *.log
 .env
 .env.*
+!.env.example
+js/firebase-config.js
+
+# Configuración local de Firebase (copiar desde js/firebase-config.example.js)
+js/firebase-config.js
+
+# Configuración local de Sentry (copiar desde js/sentry-config.example.js)
+js/sentry-config.js
 
 # Carpeta de comparación temporal (no subir)
 revisar/
@@ -12,3 +20,13 @@ revisar/
 * (1).*
 * (2).*
 *.png
+
+# Reportes enviados por usuarios (dev server)
+out/reports.json
+
+# Cypress artefactos locales
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+
+dist/

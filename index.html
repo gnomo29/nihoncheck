@@ -8,9 +8,31 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <meta name="theme-color" content="#c0392b">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <meta name="apple-mobile-web-app-title" content="NihonCheck">
+
+  <link rel="manifest" href="manifest.json">
+
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
   <title>NihonCheck — Aprende japonés a tu ritmo</title>
 
-  <link rel="stylesheet" href="styles.css?v=31">
+  <link rel="stylesheet" href="styles.css?v=39">
+
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('nihoncheck_theme') === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) { /* sin localStorage */ }
+    })();
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
 
@@ -21,6 +43,13 @@
 </head>
 
 <body>
+
+
+
+  <div class="app-toolbar" aria-label="Opciones de la aplicación">
+    <button type="button" id="auth-toggle" class="auth-toggle" data-action="abrir-auth" aria-label="Cuenta" title="Cuenta">👤</button>
+    <button type="button" id="theme-toggle" class="theme-toggle" data-action="toggle-theme" aria-label="Cambiar a modo oscuro" aria-pressed="false" title="Modo oscuro">🌙</button>
+  </div>
 
 
 
@@ -51,6 +80,22 @@
         <p class="repaso-banner__texto">Repaso sugerido: <span id="repaso-banner-cantidad">0</span> elementos en tu biblioteca — opcional, a tu ritmo</p>
 
         <button type="button" class="repaso-banner__btn" data-action="ir-repaso">Ir al repaso</button>
+
+      </div>
+
+
+
+      <div id="diagnostico-banner" class="diagnostico-banner" hidden>
+
+        <p class="diagnostico-banner__texto">¿Ya sabes algo de japonés? Un diagnóstico rápido (10 preguntas) te ayuda a saltar lo que dominas — totalmente opcional.</p>
+
+        <div class="diagnostico-banner__acciones">
+
+          <button type="button" class="diagnostico-banner__btn" data-action="ir-diagnostico-rapido">Diagnóstico rápido</button>
+
+          <button type="button" class="diagnostico-banner__omitir" data-action="cerrar-diagnostico-banner">Ahora no</button>
+
+        </div>
 
       </div>
 
@@ -182,6 +227,24 @@
 
         </div>
 
+        <div class="backup-actions" aria-label="Copia de seguridad">
+
+          <button type="button" class="home-settings__btn" data-action="exportar-backup">
+
+            Exportar backup
+
+          </button>
+
+          <button type="button" class="home-settings__btn" data-action="importar-backup">
+
+            Importar backup
+
+          </button>
+
+          <input type="file" id="input-backup-import" accept=".json,application/json" hidden>
+
+        </div>
+
       </footer>
 
     </main>
@@ -203,6 +266,20 @@
       <div class="view-body biblioteca-body">
 
         <p class="view-intro">Tu colección unificada: material que agregaste y lo que aprendiste con NihonCheck.</p>
+
+        <section class="lookup-section" aria-labelledby="titulo-lookup">
+          <h3 id="titulo-lookup" class="lookup-section__title">Buscar palabra</h3>
+          <p class="lookup-section__desc">Consulta lecturas y significados vía Jisho (requiere <code>npm run dev</code>).</p>
+          <form id="form-lookup" class="lookup-form">
+            <label for="input-lookup-term" class="lookup-form__label">Japonés o romaji</label>
+            <div class="lookup-form__row">
+              <input id="input-lookup-term" class="lookup-form__input" type="text" placeholder="Ej: 猫, neko, 学校…" autocomplete="off">
+              <button type="submit" id="btn-lookup-buscar" class="lookup-form__btn">Buscar</button>
+            </div>
+          </form>
+          <p id="lookup-status" class="lookup-status" hidden aria-live="polite"></p>
+          <div id="lookup-resultado" class="lookup-resultado" aria-live="polite"></div>
+        </section>
 
         <div id="biblioteca-tabs" class="study-tabs" role="tablist" aria-label="Carpetas de biblioteca"></div>
 
@@ -404,9 +481,11 @@
 
         <div class="modal__acciones">
 
-          <button type="button" class="btn-submit" data-action="modal-test-nivel">Hacer diagnóstico</button>
+          <button type="button" class="btn-submit" data-action="modal-test-nivel">Hacer diagnóstico (30 preguntas)</button>
 
-          <button type="button" class="btn-secondary" data-action="modal-saltar-desde-cero">Saltar examen e iniciar desde 0</button>
+          <button type="button" class="btn-secondary" data-action="ir-diagnostico-rapido">Diagnóstico rápido (10 preguntas)</button>
+
+          <button type="button" class="btn-ghost" data-action="modal-saltar-desde-cero">Saltar examen e iniciar desde 0</button>
 
         </div>
 
@@ -474,6 +553,63 @@
 
 
 
+    <!-- Modal: cuenta Firebase (opcional) -->
+    <div id="modal-auth" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="modal-auth-titulo">
+      <div class="modal modal--auth">
+        <h3 id="modal-auth-titulo" class="modal__titulo">Tu cuenta</h3>
+        <p class="modal__texto">Opcional: inicia sesión para sincronizar tu progreso entre dispositivos. La app funciona sin cuenta.</p>
+
+        <div id="auth-estado" class="auth-estado" hidden>
+          <p class="auth-estado__email">Conectado como <strong id="auth-email-visible"></strong></p>
+          <div class="auth-estado__acciones">
+            <button type="button" class="btn-secondary" data-action="auth-sync">Sincronizar perfil</button>
+            <button type="button" class="btn-secondary" data-action="auth-cargar">Cargar desde la nube</button>
+            <button type="button" class="btn-ghost" data-action="auth-logout">Cerrar sesión</button>
+          </div>
+        </div>
+
+        <form id="form-auth" class="form-auth">
+          <p id="auth-error" class="auth-error" hidden role="alert"></p>
+          <label for="auth-email" class="form-auth__label">Correo electrónico</label>
+          <input id="auth-email" name="email" class="form-auth__input" type="email" autocomplete="email" required placeholder="tu@correo.com">
+          <label for="auth-password" class="form-auth__label">Contraseña</label>
+          <input id="auth-password" name="password" class="form-auth__input" type="password" autocomplete="current-password" required minlength="6" placeholder="Mínimo 6 caracteres">
+          <div class="form-auth__botones">
+            <button type="submit" class="btn-submit" data-auth-mode="login">Iniciar sesión</button>
+            <button type="button" class="btn-secondary" data-action="auth-register">Crear cuenta</button>
+            <button type="button" class="btn-ghost" data-action="cerrar-auth">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: reportar error de lookup -->
+    <div id="modal-reporte-lookup" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="modal-reporte-titulo">
+      <div class="modal modal--reporte">
+        <h3 id="modal-reporte-titulo" class="modal__titulo">Reportar error</h3>
+        <p class="modal__texto">¿Algo incorrecto en este resultado? Indica el término y describe el problema.</p>
+        <form id="form-reporte-lookup" class="form-reporte">
+          <input type="hidden" name="report-term" value="">
+          <input type="hidden" name="report-data" value="">
+          <label for="report-term-visible" class="form-reporte__label">Término</label>
+          <input id="report-term-visible" name="report-term-visible" class="form-reporte__input form-reporte__input--readonly" type="text" readonly tabindex="-1" aria-readonly="true">
+          <label for="report-type" class="form-reporte__label">Tipo de error</label>
+          <select id="report-type" name="report-type" class="form-reporte__select">
+            <option value="lectura">Lectura incorrecta</option>
+            <option value="significado">Significado incorrecto</option>
+            <option value="ejemplos">Ejemplos incorrectos</option>
+            <option value="otro">Otro</option>
+          </select>
+          <label for="report-comment" class="form-reporte__label">Comentario</label>
+          <textarea id="report-comment" name="report-comment" class="form-reporte__input" rows="3" placeholder="Ej: la lectura no coincide con el kanji…" required></textarea>
+          <div class="form-reporte__botones">
+            <button type="submit" class="btn-submit">Enviar reporte</button>
+            <button type="button" class="btn-ghost" data-action="cerrar-reporte">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
 
 
@@ -482,19 +618,42 @@
 
 
 
-  <script src="js/romajiConverter.js?v=31"></script>
-  <script src="js/preguntas.js?v=31"></script>
-  <script src="js/lecciones.js?v=31"></script>
-  <script src="js/temas.js?v=31"></script>
-  <script src="js/rutaPersonalizada.js?v=31"></script>
-  <script src="js/motorAdaptativo.js?v=31"></script>
-  <script src="js/resultados.js?v=31"></script>
-  <script src="js/nihoncheck.js?v=31"></script>
-  <script src="js/srs.js?v=31"></script>
-  <script src="js/vistaRepaso.js?v=31"></script>
-  <script src="js/estadisticas.js?v=31"></script>
-  <script src="js/interfazTest.js?v=31"></script>
-  <script src="js/app.js?v=31"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js?v=39"></script>
+  <script src="js/firestorePerfilAdapter.js?v=39"></script>
+  <script src="js/firebaseAuth.js?v=39"></script>
+  <script src="https://browser.sentry-cdn.com/8.47.0/bundle.min.js" crossorigin="anonymous"></script>
+  <script src="js/sentry-config.js?v=39"></script>
+  <script src="js/sentryInit.js?v=39"></script>
+  <script src="js/romajiConverter.js?v=39"></script>
+  <script src="js/preguntas.js?v=39"></script>
+  <script src="js/lecciones.js?v=39"></script>
+  <script src="js/temas.js?v=39"></script>
+  <script src="js/rutaPersonalizada.js?v=39"></script>
+  <script src="js/motorAdaptativo.js?v=39"></script>
+  <script src="js/resultados.js?v=39"></script>
+  <script src="js/nihoncheck.js?v=39"></script>
+  <script src="js/srs.js?v=39"></script>
+  <script src="js/vistaRepaso.js?v=39"></script>
+  <script src="js/estadisticas.js?v=39"></script>
+  <script src="js/interfazTest.js?v=39"></script>
+  <script src="js/kanjiStrokeViewer.js?v=39"></script>
+  <script src="js/lookupClient.js?v=39"></script>
+  <script src="js/backupRestore.js?v=39"></script>
+  <script src="js/app.js?v=39"></script>
+
+  <script>
+    (function () {
+      if (!('serviceWorker' in navigator)) return;
+      var secure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+      if (!secure) return;
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./service-worker.js', { scope: './' }).catch(function () { /* sin SW */ });
+      });
+    })();
+  </script>
 
 </body>
 

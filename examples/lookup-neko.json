@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "term": "猫",
+  "word": "猫",
+  "readings": ["ねこ"],
+  "meanings": ["cat (esp. domestic)", "geisha", "wheelbarrow"],
+  "translationEs": "gato",
+  "jlpt": "jlpt-n5",
+  "tags": ["Noun"],
+  "confidence": 0.91,
+  "confidenceLevel": "alta",
+  "sources": ["jisho", "kuromoji", "tatoeba"],
+  "tokens": [
+    { "surface": "猫", "reading": "ネコ", "basic": "猫", "pos": "名詞" }
+  ],
+  "examples": [
+    {
+      "japanese": "猫が好きです。",
+      "translation": "I like cats.",
+      "id": 67890
+    }
+  ],
+  "kanjiSvgs": [
+    { "char": "猫", "url": "https://raw.githubusercontent.com/KanjiVG/kanjivg/master/kanji/0732b.svg" }
+  ],
+  "jisho": {
+    "slug": "猫",
+    "url": "https://jisho.org/word/猫",
+    "rawCount": 4
+  },
+  "furigana": "<ruby>猫<rt>ねこ</rt></ruby>"
+}
