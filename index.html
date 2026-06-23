@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>NihonCheck — Aprende japonés a tu ritmo</title>
+
+  <link rel="stylesheet" href="styles.css?v=29">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+
+
+  <div id="app" class="app">
+
+
+
+    <!-- ==================== INICIO ==================== -->
+
+    <main id="view-home" class="view view--active" data-view="home">
+
+
+
+      <header class="hero">
+
+        <p class="hero__kanji" aria-hidden="true">日本語</p>
+
+        <h1 class="hero__title">NihonCheck</h1>
+
+        <p class="hero__subtitle">¿Qué sé realmente y qué me falta aprender?</p>
+
+      </header>
+
+
+
+      <div class="home-split">
+
+
+
+        <section class="home-section" aria-labelledby="titulo-estudio">
+
+          <div class="home-section__header">
+
+            <h2 id="titulo-estudio" class="home-section__title">Área de Estudio Personal</h2>
+
+            <p class="home-section__desc">Organiza tu material en carpetas y repasa con flashcards.</p>
+
+          </div>
+
+
+
+          <div class="folder-grid" role="list">
+
+            <button type="button" class="folder-card" data-action="abrir-carpeta" data-carpeta="kanji" role="listitem">
+
+              <span class="folder-card__icon" aria-hidden="true">漢</span>
+
+              <span class="folder-card__name">Kanji</span>
+
+              <span class="folder-card__count" data-count-carpeta="kanji">0</span>
+
+            </button>
+
+            <button type="button" class="folder-card" data-action="abrir-carpeta" data-carpeta="hiragana" role="listitem">
+
+              <span class="folder-card__icon" aria-hidden="true">あ</span>
+
+              <span class="folder-card__name">Hiragana</span>
+
+              <span class="folder-card__count" data-count-carpeta="hiragana">0</span>
+
+            </button>
+
+            <button type="button" class="folder-card" data-action="abrir-carpeta" data-carpeta="katakana" role="listitem">
+
+              <span class="folder-card__icon" aria-hidden="true">ア</span>
+
+              <span class="folder-card__name">Katakana</span>
+
+              <span class="folder-card__count" data-count-carpeta="katakana">0</span>
+
+            </button>
+
+            <button type="button" class="folder-card" data-action="abrir-carpeta" data-carpeta="gramatica" role="listitem">
+
+              <span class="folder-card__icon" aria-hidden="true">文</span>
+
+              <span class="folder-card__name">Gramática</span>
+
+              <span class="folder-card__count" data-count-carpeta="gramatica">0</span>
+
+            </button>
+
+          </div>
+
+
+
+          <button type="button" class="btn-agregar" data-action="abrir-agregar">
+
+            + Agregar Material
+
+          </button>
+
+        </section>
+
+
+
+        <section class="home-section home-section--camino" aria-labelledby="titulo-camino">
+
+          <div class="home-section__header">
+
+            <h2 id="titulo-camino" class="home-section__title">Tu ruta de aprendizaje</h2>
+
+            <p class="home-section__desc">Estudio personalizado según tu perfil de dominio.</p>
+
+          </div>
+
+
+
+          <button type="button" class="camino-card" data-action="ir-camino">
+
+            <span class="camino-card__icon" aria-hidden="true">道</span>
+
+            <span class="camino-card__label">Aprender con la web</span>
+
+            <span class="camino-card__hint" id="camino-estado">Personaliza tu ruta de estudio</span>
+
+          </button>
+
+        </section>
+
+
+
+      </div>
+
+
+
+      <footer class="home-footer home-footer--settings">
+
+        <p>JLPT · Hiragana · Katakana · Kanji · Gramática</p>
+
+        <div class="home-settings" aria-label="Configuración">
+
+          <button type="button" class="home-settings__btn" data-action="repetir-diagnostico" id="btn-repetir-diagnostico" hidden>
+
+            Repetir diagnóstico
+
+          </button>
+
+          <button type="button" class="home-settings__btn home-settings__btn--danger" data-action="reiniciar-progreso">
+
+            Reiniciar progreso
+
+          </button>
+
+        </div>
+
+      </footer>
+
+    </main>
+
+
+
+    <!-- ==================== MI BIBLIOTECA ==================== -->
+
+    <section id="view-biblioteca" class="view" data-view="biblioteca" hidden>
+
+      <header class="view-header">
+
+        <button class="btn-back" type="button" data-action="back-home" data-nav="home">← Inicio</button>
+
+        <h2>Mi Biblioteca</h2>
+
+      </header>
+
+      <div class="view-body biblioteca-body">
+
+        <p class="view-intro">Tu colección unificada: material que agregaste y lo que aprendiste con NihonCheck.</p>
+
+        <div id="biblioteca-tabs" class="study-tabs" role="tablist" aria-label="Carpetas de biblioteca"></div>
+
+        <div id="biblioteca-filtros" class="biblioteca-filtros study-tabs" role="tablist" aria-label="Filtrar por estado"></div>
+
+        <div id="biblioteca-grid" class="flashcard-grid biblioteca-grid" aria-live="polite"></div>
+
+        <div id="biblioteca-practica" class="biblioteca-practica" hidden aria-live="polite"></div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==================== CAMINO ==================== -->
+
+    <section id="view-camino" class="view" data-view="camino" hidden>
+
+      <header class="view-header">
+
+        <button class="btn-back" type="button" data-action="back-home" data-nav="home">← Inicio</button>
+
+        <h2>Tu ruta de aprendizaje</h2>
+
+      </header>
+
+      <div class="view-body camino-hub">
+
+        <p class="view-intro">Tu dashboard de estudio personalizado. Sin orden obligatorio — estudia lo que necesitas.</p>
+
+        <div id="camino-progreso" class="camino-progreso" aria-live="polite"></div>
+
+        <button type="button" class="camino-accion camino-accion--primary" data-action="continuar-aprender">
+
+          Ir a mi dashboard de estudio
+
+          <span class="camino-accion__hint" id="camino-area-actual">Ver ruta personalizada</span>
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==================== TEST DE NIVEL (solo diagnóstico / reevaluar) ==================== -->
+
+    <section id="view-test-nivel" class="view" data-view="test-nivel" hidden>
+
+      <header class="view-header">
+
+        <button class="btn-back" type="button" data-action="cancelar-test">← Cancelar</button>
+
+        <h2>Diagnóstico de nivel</h2>
+
+      </header>
+
+      <div class="view-body">
+
+        <p class="view-intro">Responde en romaji. 30 preguntas para personalizar tu ruta de estudio.</p>
+
+        <div id="test-nivel-container" class="test-container">
+
+          <p class="test-placeholder">Preparando diagnóstico…</p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==================== RESULTADOS DIAGNÓSTICO ==================== -->
+
+    <section id="view-resultados-ruta" class="view" data-view="resultados-ruta" hidden>
+
+      <header class="view-header">
+
+        <button class="btn-back" type="button" data-action="ir-dashboard-aprender">← Dashboard</button>
+
+        <h2>Tu diagnóstico</h2>
+
+      </header>
+
+      <div class="view-body">
+
+        <div id="resultados-ruta-container" aria-live="polite"></div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==================== APRENDER — Dashboard de dominio ==================== -->
+
+    <section id="view-aprender" class="view" data-view="aprender" hidden>
+
+      <header class="view-header">
+
+        <button class="btn-back" type="button" data-action="back-camino" data-nav="camino">← Camino</button>
+
+        <h2>Aprender con la web</h2>
+
+      </header>
+
+      <div class="view-body aprender-hub">
+
+        <p class="view-intro">Tu ruta según lo que dominas y lo que te falta. Estudia cualquier tema en el orden que prefieras.</p>
+
+        <div id="aprender-dashboard" class="aprender-dashboard" aria-live="polite"></div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==================== LISTA DE TEMAS POR ÁREA ==================== -->
+
+    <section id="view-lecciones-lista" class="view" data-view="lecciones-lista" hidden>
+
+      <header class="view-header">
+
+        <button class="btn-back" type="button" data-action="back-aprender-areas">← Dashboard</button>
+
+        <h2 id="lecciones-lista-titulo">Temas</h2>
+
+      </header>
+
+      <div class="view-body">
+
+        <div id="lecciones-progreso-bar" class="lecciones-progreso-bar" aria-live="polite"></div>
+
+        <div id="lecciones-lista" class="lecciones-lista" role="list" aria-live="polite"></div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==================== TEMA ACTIVO ==================== -->
+
+    <section id="view-leccion" class="view" data-view="leccion" hidden>
+
+      <header class="view-header">
+
+        <button class="btn-back" type="button" data-action="back-lecciones-lista">← Temas</button>
+
+        <h2 id="leccion-titulo">Tema</h2>
+
+      </header>
+
+      <div class="view-body">
+
+        <div id="leccion-contenedor" class="leccion-contenedor" aria-live="polite"></div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- Modal: diagnóstico inicial -->
+
+    <div id="modal-nuevo" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="modal-nuevo-titulo">
+
+      <div class="modal">
+
+        <h3 id="modal-nuevo-titulo" class="modal__titulo">Personaliza tu ruta</h3>
+
+        <p class="modal__texto">Haz tu diagnóstico para saber qué dominas y qué te falta aprender. Tu ruta se adaptará a tus resultados.</p>
+
+        <div class="modal__acciones">
+
+          <button type="button" class="btn-submit" data-action="modal-test-nivel">Hacer diagnóstico</button>
+
+          <button type="button" class="btn-secondary" data-action="modal-saltar-desde-cero">Saltar examen e iniciar desde 0</button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- Modal: agregar material -->
+
+    <div id="modal-agregar" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="modal-agregar-titulo">
+
+      <div class="modal modal--agregar">
+
+        <h3 id="modal-agregar-titulo" class="modal__titulo">Agregar Material</h3>
+
+        <form id="form-agregar" class="form-agregar">
+
+          <label for="input-material" class="form-agregar__label">Romaji o japonés</label>
+
+          <textarea id="input-material" class="form-agregar__input" rows="3" placeholder="Ej: neko, こんにちは…" autocomplete="off"></textarea>
+
+          <div class="form-agregar__preview" aria-live="polite">
+
+            <span class="form-agregar__preview-label">Vista previa</span>
+
+            <span id="preview-material" class="form-agregar__preview-text">—</span>
+
+          </div>
+
+          <p id="carpeta-detectada" class="form-agregar__carpeta-detectada" aria-live="polite" data-carpeta="hiragana">
+
+            Se guardará en: <strong>Hiragana</strong>
+
+          </p>
+
+          <select id="select-carpeta" class="form-agregar__select" hidden aria-hidden="true" tabindex="-1">
+
+            <option value="hiragana">Hiragana</option>
+
+            <option value="katakana">Katakana</option>
+
+            <option value="kanji">Kanji</option>
+
+            <option value="gramatica">Gramática</option>
+
+          </select>
+
+          <div class="form-agregar__botones">
+
+            <button type="submit" class="btn-submit">Guardar</button>
+
+            <button type="button" class="btn-secondary" data-action="guardar-y-otro">Guardar y Limpiar</button>
+
+            <button type="button" class="btn-ghost" data-action="cerrar-agregar">Cancelar</button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+
+
+    <div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
+
+
+
+  </div>
+
+
+
+  <script src="js/romajiConverter.js?v=29"></script>
+  <script src="js/preguntas.js?v=29"></script>
+  <script src="js/lecciones.js?v=29"></script>
+  <script src="js/temas.js?v=29"></script>
+  <script src="js/rutaPersonalizada.js?v=29"></script>
+  <script src="js/motorAdaptativo.js?v=29"></script>
+  <script src="js/resultados.js?v=29"></script>
+  <script src="js/nihoncheck.js?v=29"></script>
+  <script src="js/interfazTest.js?v=29"></script>
+  <script src="js/app.js?v=29"></script>
+
+</body>
+
+</html>
+
+
