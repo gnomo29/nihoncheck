@@ -138,6 +138,12 @@
 
     });
 
+    if (NC.estadisticas && NC.estadisticas.renderizar) {
+
+      NC.estadisticas.renderizar();
+
+    }
+
   }
 
 
@@ -424,7 +430,7 @@
 
 
 
-    if (nombre === 'home') { actualizarContadores(); actualizarHintsCamino(); }
+    if (nombre === 'home') { actualizarContadores(); actualizarHintsCamino(); actualizarBannerRepaso(); }
 
     if (nombre === 'camino') { pintarProgresoCamino(); actualizarHintsCamino(); }
 
@@ -483,6 +489,42 @@
     cerrarPracticaBiblioteca();
 
     showView('home');
+
+  }
+
+
+
+  function actualizarBannerRepaso() {
+
+    if (!el.repasoBanner || !NC.srs || !NC.srs.contarRepasosPendientesHoy) return;
+
+    var pendientes = NC.srs.contarRepasosPendientesHoy();
+
+    if (pendientes > 0) {
+
+      if (el.repasoBannerCantidad) el.repasoBannerCantidad.textContent = pendientes;
+
+      el.repasoBanner.hidden = false;
+
+    } else {
+
+      el.repasoBanner.hidden = true;
+
+    }
+
+  }
+
+
+
+  function irRepaso() {
+
+    if (NC.vistaRepaso && NC.vistaRepaso.iniciar) {
+
+      NC.vistaRepaso.iniciar(el.repasoContenedor, irHome);
+
+    }
+
+    showView('repaso');
 
   }
 
@@ -586,7 +628,25 @@
 
     var tituloLeccion = $('leccion-titulo');
 
-    if (tituloLeccion) tituloLeccion.textContent = leccion.nombre || leccion.titulo;
+    if (tituloLeccion) {
+
+      tituloLeccion.textContent = leccion.nombre || leccion.titulo;
+
+      if (leccion.jlpt) {
+
+        var badge = document.createElement('span');
+
+        badge.className = 'jlpt-badge';
+
+        badge.textContent = leccion.jlpt;
+
+        tituloLeccion.appendChild(document.createTextNode(' '));
+
+        tituloLeccion.appendChild(badge);
+
+      }
+
+    }
 
 
 
@@ -912,6 +972,8 @@
 
       leccion: $('view-leccion'),
 
+      repaso: $('view-repaso'),
+
     };
 
 
@@ -933,6 +995,12 @@
       leccionesProgresoBar: $('lecciones-progreso-bar'),
 
       leccionContenedor: $('leccion-contenedor'),
+
+      repasoContenedor: $('repaso-contenedor'),
+
+      repasoBanner: $('repaso-banner'),
+
+      repasoBannerCantidad: $('repaso-banner-cantidad'),
 
       testContainer: $('test-nivel-container'),
 
@@ -1019,6 +1087,18 @@
       renderizarBibliotecaActual();
 
     });
+
+
+
+    // FASE 1b: inicializar el sistema de Repetición Espaciada (SRS).
+
+    // Idempotente: migra la biblioteca solo la primera vez.
+
+    if (NihonCheck.srs && NihonCheck.srs.inicializarSRS) {
+
+      NihonCheck.srs.inicializarSRS();
+
+    }
 
 
 
@@ -1170,6 +1250,8 @@
 
       var nav = btn.getAttribute('data-nav');
 
+      if (a === 'ir-repaso') { irRepaso(); return; }
+
       if (a === 'back-home' || nav === 'home') { irHome(); return; }
 
       if (a === 'back-camino' || nav === 'camino') { irCaminoDesdeVista(); return; }
@@ -1271,5 +1353,7 @@
   else init();
 
 })();
+
+
 
 

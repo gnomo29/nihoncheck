@@ -546,3 +546,5 @@ function patchNihoncheck() {
 patchNihoncheck();
 
 module.exports = { hiragana, katakana, kanji, generateCompactLine };
+
+

@@ -357,3 +357,5 @@ NihonCheck.calcularTiempoPromedio = function (tiemposRespuesta) {
 };
 
 window.NihonCheck = NihonCheck;
+
+

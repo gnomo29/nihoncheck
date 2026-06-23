@@ -171,3 +171,5 @@ NihonCheck.generarHTMLResultados = function (historial, errores, tiemposRespuest
 };
 
 window.NihonCheck = NihonCheck;
+
+

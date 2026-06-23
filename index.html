@@ -10,7 +10,7 @@
 
   <title>NihonCheck — Aprende japonés a tu ritmo</title>
 
-  <link rel="stylesheet" href="styles.css?v=29">
+  <link rel="stylesheet" href="styles.css?v=31">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
 
@@ -43,6 +43,16 @@
         <p class="hero__subtitle">¿Qué sé realmente y qué me falta aprender?</p>
 
       </header>
+
+
+
+      <div id="repaso-banner" class="repaso-banner" hidden>
+
+        <p class="repaso-banner__texto">Repaso sugerido: <span id="repaso-banner-cantidad">0</span> elementos en tu biblioteca — opcional, a tu ritmo</p>
+
+        <button type="button" class="repaso-banner__btn" data-action="ir-repaso">Ir al repaso</button>
+
+      </div>
 
 
 
@@ -145,6 +155,10 @@
 
 
       </div>
+
+
+
+      <section id="seccion-estadisticas" class="dashboard-stats" hidden></section>
 
 
 
@@ -356,6 +370,28 @@
 
 
 
+    <section id="view-repaso" class="view" data-view="repaso" hidden>
+
+      <header class="view-header">
+
+        <button class="btn-back" type="button" data-action="back-home" data-nav="home">← Inicio</button>
+
+        <h2>Repaso del día</h2>
+
+      </header>
+
+      <div class="view-body">
+
+        <p class="view-intro">Refuerza ítems que ya dominas en tu biblioteca. No bloquea nada — estudia o repasa cuando quieras.</p>
+
+        <div id="repaso-contenedor" aria-live="polite"></div>
+
+      </div>
+
+    </section>
+
+
+
     <!-- Modal: diagnóstico inicial -->
 
     <div id="modal-nuevo" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="modal-nuevo-titulo">
@@ -364,7 +400,7 @@
 
         <h3 id="modal-nuevo-titulo" class="modal__titulo">Personaliza tu ruta</h3>
 
-        <p class="modal__texto">Haz tu diagnóstico para saber qué dominas y qué te falta aprender. Tu ruta se adaptará a tus resultados.</p>
+        <p class="modal__texto">Opcional: el diagnóstico detecta qué ya dominas para no perder tiempo repasando lo que sabes. También puedes saltar el examen y empezar desde cero.</p>
 
         <div class="modal__acciones">
 
@@ -446,19 +482,24 @@
 
 
 
-  <script src="js/romajiConverter.js?v=29"></script>
-  <script src="js/preguntas.js?v=29"></script>
-  <script src="js/lecciones.js?v=29"></script>
-  <script src="js/temas.js?v=29"></script>
-  <script src="js/rutaPersonalizada.js?v=29"></script>
-  <script src="js/motorAdaptativo.js?v=29"></script>
-  <script src="js/resultados.js?v=29"></script>
-  <script src="js/nihoncheck.js?v=29"></script>
-  <script src="js/interfazTest.js?v=29"></script>
-  <script src="js/app.js?v=29"></script>
+  <script src="js/romajiConverter.js?v=31"></script>
+  <script src="js/preguntas.js?v=31"></script>
+  <script src="js/lecciones.js?v=31"></script>
+  <script src="js/temas.js?v=31"></script>
+  <script src="js/rutaPersonalizada.js?v=31"></script>
+  <script src="js/motorAdaptativo.js?v=31"></script>
+  <script src="js/resultados.js?v=31"></script>
+  <script src="js/nihoncheck.js?v=31"></script>
+  <script src="js/srs.js?v=31"></script>
+  <script src="js/vistaRepaso.js?v=31"></script>
+  <script src="js/estadisticas.js?v=31"></script>
+  <script src="js/interfazTest.js?v=31"></script>
+  <script src="js/app.js?v=31"></script>
 
 </body>
 
 </html>
+
+
 
 

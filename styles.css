@@ -3657,3 +3657,199 @@ body.modal-abierto {
   font-size: 0.85rem;
   color: var(--color-text-muted);
 }
+
+
+
+
+/* ===== FASE 2 — Vista de Repaso SRS ===== */
+.repaso-panel {
+  margin: 0 auto;
+}
+.repaso-resumen {
+  text-align: center;
+}
+.repaso-resumen__texto {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+.repaso-resumen__stats {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: center;
+  margin: var(--space-sm) 0;
+}
+.repaso-resumen__stat {
+  flex: 1;
+  max-width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-sm);
+  border-radius: var(--radius);
+  border: 1.5px solid var(--color-border);
+}
+.repaso-resumen__stat--ok { border-color: #27ae60; background: rgba(39, 174, 96, 0.06); }
+.repaso-resumen__stat--fail { border-color: var(--color-accent); background: var(--color-accent-light); }
+.repaso-resumen__num {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.repaso-resumen__stat--ok .repaso-resumen__num { color: #27ae60; }
+.repaso-resumen__stat--fail .repaso-resumen__num { color: var(--color-accent); }
+.repaso-resumen__label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Banner de repaso pendiente en home */
+.repaso-banner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-md);
+  background: var(--color-accent-light);
+  border: 1.5px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+}
+.repaso-banner__texto {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+.repaso-banner__btn {
+  padding: 0.45rem 0.9rem;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius);
+  white-space: nowrap;
+}
+.repaso-banner__btn:hover { background: var(--color-accent-hover); }
+
+
+
+/* ============================================================
+   FASE 3 — Panel de estadísticas en el dashboard (home)
+   ============================================================ */
+.dashboard-stats {
+  width: 100%;
+  margin-top: var(--space-lg);
+}
+.estadisticas-titulo {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-sm);
+}
+.estadisticas-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  align-items: start;
+}
+@media (min-width: 640px) {
+  .estadisticas-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 960px) {
+  .estadisticas-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.estadisticas-bloque {
+  height: 100%;
+  min-width: 0;
+}
+/* Dominio stat boxes: wrap inside narrow grid cells */
+.dashboard-stats .progreso-historico__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+.dashboard-stats .progreso-stat {
+  flex: 1 1 5.75rem;
+  min-width: 0;
+}
+.dashboard-stats .progreso-stat__label {
+  text-align: center;
+  line-height: 1.25;
+  overflow-wrap: break-word;
+}
+.estadisticas-barra {
+  margin-bottom: var(--space-sm);
+}
+.estadisticas-barra:last-child {
+  margin-bottom: 0;
+}
+.estadisticas-racha__cuerpo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) 0;
+}
+.estadisticas-racha__actual {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+.estadisticas-racha__fuego {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+.estadisticas-racha__num {
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+}
+.estadisticas-racha__label {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+.estadisticas-racha__mejor {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+.estadisticas-racha__mejor strong {
+  color: var(--color-text);
+}
+
+
+
+/* ============================================================
+   FASE FINAL — Badge JLPT (nivel de examen oficial)
+   ============================================================ */
+.jlpt-badge {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 0.4rem;
+  padding: 0.1rem 0.45rem;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.4;
+  color: var(--color-accent);
+  background: var(--color-accent-light);
+  border: 1.5px solid var(--color-accent);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+#leccion-titulo .jlpt-badge {
+  font-size: 0.6rem;
+  position: relative;
+  top: -2px;
+}

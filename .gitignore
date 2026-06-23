@@ -4,3 +4,11 @@ Thumbs.db
 *.log
 .env
 .env.*
+
+# Carpeta de comparación temporal (no subir)
+revisar/
+
+# Copias accidentales / capturas no usadas en runtime
+* (1).*
+* (2).*
+*.png

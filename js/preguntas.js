@@ -1828,3 +1828,5 @@ NihonCheck.obtenerTodasLasPreguntas = function () {
 };
 
 window.NihonCheck = NihonCheck;
+
+

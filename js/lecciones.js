@@ -12,6 +12,7 @@
         tema: 'vocales',
         nombre: 'Grupo A',
         nivel: 'basico',
+        jlpt: 'N5',
         elementos: [
           { caracter: 'あ', lectura: 'a', tipo: 'caracter' },
           { caracter: 'い', lectura: 'i', tipo: 'caracter' },
@@ -25,6 +26,7 @@
         tema: 'filaK',
         nombre: 'Grupo KA',
         nivel: 'basico',
+        jlpt: 'N5',
         elementos: [
           { caracter: 'か', lectura: 'ka', tipo: 'caracter' },
           { caracter: 'き', lectura: 'ki', tipo: 'caracter' },
@@ -38,6 +40,7 @@
         tema: 'filaS',
         nombre: 'Grupo SA',
         nivel: 'basico',
+        jlpt: 'N5',
         elementos: [
           { caracter: 'さ', lectura: 'sa', tipo: 'caracter' },
           { caracter: 'し', lectura: 'shi', tipo: 'caracter' },
@@ -51,6 +54,7 @@
         tema: 'filaT',
         nombre: 'Grupo TA',
         nivel: 'basico',
+        jlpt: 'N5',
         elementos: [
           { caracter: 'た', lectura: 'ta', tipo: 'caracter' },
           { caracter: 'ち', lectura: 'chi', tipo: 'caracter' },
@@ -64,6 +68,7 @@
         tema: 'combinaciones',
         nombre: 'Grupo combinaciones (ゃ・ゅ・ょ)',
         nivel: 'intermedio',
+        jlpt: 'N5',
         elementos: [
           { caracter: 'きゃ', lectura: 'kya', tipo: 'caracter' },
           { caracter: 'しゅ', lectura: 'shu', tipo: 'caracter' },
@@ -77,6 +82,7 @@
         tema: 'dakuten',
         nombre: 'Grupo dakuten',
         nivel: 'intermedio',
+        jlpt: 'N5',
         elementos: [
           { caracter: 'が', lectura: 'ga', tipo: 'caracter' },
           { caracter: 'ざ', lectura: 'za', tipo: 'caracter' },
@@ -92,6 +98,7 @@
         tema: 'vocales',
         nombre: 'Grupo A',
         nivel: 'basico',
+        jlpt: 'N5',
         elementos: [
           { caracter: 'ア', lectura: 'a', tipo: 'caracter' },
           { caracter: 'イ', lectura: 'i', tipo: 'caracter' },
@@ -105,6 +112,7 @@
         tema: 'filaK',
         nombre: 'Grupo KA',
         nivel: 'basico',
+        jlpt: 'N5',
         elementos: [
           { caracter: 'カ', lectura: 'ka', tipo: 'caracter' },
           { caracter: 'キ', lectura: 'ki', tipo: 'caracter' },
@@ -118,6 +126,7 @@
         tema: 'filaS',
         nombre: 'Grupo SA',
         nivel: 'basico',
+        jlpt: 'N5',
         elementos: [
           { caracter: 'サ', lectura: 'sa', tipo: 'caracter' },
           { caracter: 'シ', lectura: 'shi', tipo: 'caracter' },
@@ -131,6 +140,7 @@
         tema: 'filaT',
         nombre: 'Grupo TA',
         nivel: 'basico',
+        jlpt: 'N5',
         elementos: [
           { caracter: 'タ', lectura: 'ta', tipo: 'caracter' },
           { caracter: 'チ', lectura: 'chi', tipo: 'caracter' },
@@ -144,6 +154,7 @@
         tema: 'combinaciones',
         nombre: 'Grupo combinaciones (ャ・ュ・ョ)',
         nivel: 'intermedio',
+        jlpt: 'N5',
         elementos: [
           { caracter: 'キャ', lectura: 'kya', tipo: 'caracter' },
           { caracter: 'シュ', lectura: 'shu', tipo: 'caracter' },
@@ -157,6 +168,7 @@
         tema: 'dakuten',
         nombre: 'Grupo dakuten',
         nivel: 'intermedio',
+        jlpt: 'N5',
         elementos: [
           { caracter: 'ガ', lectura: 'ga', tipo: 'caracter' },
           { caracter: 'ザ', lectura: 'za', tipo: 'caracter' },
@@ -172,6 +184,7 @@
         tema: 'numeros',
         nombre: 'Números 一〜五',
         nivel: 'basico',
+        jlpt: 'N5',
         elementos: [
           {
             caracter: '一', lectura: 'ichi', tipo: 'caracter',
@@ -282,6 +295,7 @@
         tema: 'tiempo',
         nombre: 'Días de la semana',
         nivel: 'intermedio',
+        jlpt: 'N5',
         elementos: [
           {
             caracter: '日', lectura: 'nichi', tipo: 'caracter',
@@ -395,6 +409,7 @@
         tema: 'familia',
         nombre: 'Kanji básicos N5',
         nivel: 'intermedio',
+        jlpt: 'N5',
         elementos: [
           {
             caracter: '人', lectura: 'hito', tipo: 'caracter',
@@ -506,6 +521,7 @@
         tema: 'naturaleza',
         nombre: 'Naturaleza',
         nivel: 'intermedio',
+        jlpt: 'N5',
         elementos: [
           {
             caracter: '山', lectura: 'yama', tipo: 'caracter',
@@ -614,6 +630,7 @@
         tema: 'verbos',
         nombre: 'Verbos básicos',
         nivel: 'intermedio',
+        jlpt: 'N5',
         elementos: [
           {
             caracter: '行', lectura: 'iku', tipo: 'caracter',
@@ -726,6 +743,7 @@
         tema: 'particulas',
         nombre: 'Partícula は (wa)',
         nivel: 'basico',
+        jlpt: 'N5',
         elementos: [
           { caracter: 'は', lectura: 'wa', tipo: 'gramatica', explicacion: 'Marcador de tema' },
           { caracter: 'わたしは', lectura: 'watashi wa', tipo: 'gramatica', explicacion: 'Yo (como tema)', ejemplo: 'わたしは学生です' },
@@ -739,6 +757,7 @@
         tema: 'verbos',
         nombre: 'Verbo です (desu)',
         nivel: 'basico',
+        jlpt: 'N5',
         elementos: [
           { caracter: 'です', lectura: 'desu', tipo: 'gramatica', explicacion: 'Copula formal: «es / soy»' },
           { caracter: '学生です', lectura: 'gakusei desu', tipo: 'gramatica', explicacion: 'Soy estudiante', ejemplo: 'わたしは学生です' },
@@ -752,6 +771,7 @@
         tema: 'negacion',
         nombre: 'Negaciones básicas',
         nivel: 'intermedio',
+        jlpt: 'N5',
         elementos: [
           { caracter: 'じゃない', lectura: 'janai', tipo: 'gramatica', explicacion: 'No es (coloquial)' },
           { caracter: 'ではありません', lectura: 'dewa arimasen', tipo: 'gramatica', explicacion: 'No es (formal)' },
@@ -779,6 +799,7 @@
       nombre: tema.nombre,
       titulo: tema.nombre,
       nivel: tema.nivel || 'basico',
+      jlpt: tema.jlpt || null,
       numero: indice + 1,
       elementos: tema.elementos,
       area: tema.area,
@@ -841,3 +862,5 @@
   window.obtenerLeccion = window.obtenerTema;
   window.obtenerTotalLecciones = window.obtenerTotalTemas;
 })();
+
+

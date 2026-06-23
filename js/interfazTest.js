@@ -236,6 +236,12 @@ NihonCheck.iniciarExamen = function (contenedor, btnStart, opciones) {
       NihonCheck.registrarResultadoMemoria(preguntaActual, acerto, tiempoMs);
     }
 
+    // FASE 0 — Hook aditivo: registrar actividad diaria tras cada respuesta.
+    // No altera la lógica del examen; solo marca el día como activo.
+    if (NihonCheck.registrarActividadDiaria) {
+      NihonCheck.registrarActividadDiaria();
+    }
+
     mostrarFeedback(contenedor, acerto, preguntaActual.respuestaCorrecta);
 
     setTimeout(function () {
@@ -303,3 +309,5 @@ NihonCheck.iniciarExamenDeContenido = function (contenedor, btnStart, uploadFeed
 };
 
 window.NihonCheck = NihonCheck;
+
+

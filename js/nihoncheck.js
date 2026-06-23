@@ -1,4 +1,4 @@
-﻿/**
+/**
  * NIHONCHECK — Nucleo: biblioteca, memoria, vistas
  * Requiere: preguntas.js, motorAdaptativo.js, resultados.js, interfazTest.js
  */
@@ -1020,6 +1020,12 @@
     var carpeta = item.carpeta || 'hiragana';
     var clave = NihonCheck.claveBibliotecaItem(item, carpeta);
 
+    // FASE FINAL (UX): la práctica de tarjetas también cuenta como actividad
+    // diaria, para que la racha refleje el estudio real (no solo exámenes).
+    if (NihonCheck.registrarActividadDiaria) {
+      NihonCheck.registrarActividadDiaria();
+    }
+
     if (modo === 'aprender') {
       if (acerto) {
         NihonCheck.agregarABibliotecaAutomatica({
@@ -1037,6 +1043,13 @@
         item: item,
         sinRecalibrar: true,
       });
+    }
+
+    // FASE 1b: si el ítem ya está en un ciclo SRS activo, registrar este
+    // repaso (reprograma el próximo intervalo según acierto/fallo).
+    if (item.srs && item.srs.proximoRepaso && NihonCheck.srs &&
+        NihonCheck.srs.procesarRepasoSRS) {
+      NihonCheck.srs.procesarRepasoSRS(carpeta, item.caracter || item.titulo, acerto);
     }
 
     NihonCheck.recalibrarPerfil({
@@ -1155,6 +1168,12 @@
       ultimoResultado: item.ultimoResultado || null,
       ultimaPractica: item.ultimaPractica || null,
     };
+    // FASE 1b: preservar el campo srs (Repetición Espaciada) a través de
+    // la normalización. Sin esto, srs se perdería en cada lectura de la
+    // biblioteca y los hooks de estado/práctica no podrían verlo.
+    if (item.srs && typeof item.srs === 'object') {
+      base.srs = item.srs;
+    }
     if (carpeta === 'gramatica') {
       return Object.assign(base, {
         titulo: item.titulo || '',
@@ -1263,6 +1282,14 @@
    * 🔴 reforzar: ultimoResultado === 'fallo' o en puntos_debiles globales
    */
   NihonCheck.calcularEstadoVisualTarjeta = function (item) {
+    // FASE 1b: prioridad máxima — si el ítem tiene un repaso SRS vencido
+    // (proximoRepaso <= hoy), se marca como 'repaso_pendiente'. Se evalúa
+    // antes que cualquier otro estado y para todas las categorías.
+    var hoy = new Date().toISOString().split('T')[0];
+    if (item.srs && item.srs.proximoRepaso &&
+        String(item.srs.proximoRepaso).split('T')[0] <= hoy) {
+      return 'repaso_pendiente';
+    }
     if (item.carpeta === 'gramatica' || item.tipo === 'gramatica') {
       return item.ultimoResultado === 'fallo' ? 'reforzar' : 'neutro';
     }
@@ -1364,6 +1391,21 @@
     }
 
     if (actualizado) NihonCheck.guardarBibliotecaPersonal(bib);
+
+    // FASE 1b: si el ítem acaba de alcanzar estado 'dominado' y aún no
+    // tiene un repaso SRS programado, iniciar su ciclo de repaso.
+    if (actualizado && itemEncontrado) {
+      var estadoActual = NihonCheck.calcularEstadoVisualTarjeta(itemEncontrado);
+      if (estadoActual === 'dominado' &&
+          (!itemEncontrado.srs || !itemEncontrado.srs.proximoRepaso)) {
+        if (NihonCheck.srs && NihonCheck.srs.programarRepaso) {
+          NihonCheck.srs.programarRepaso(itemEncontrado, true);
+          // Persistir de nuevo: itemEncontrado ahora tiene .srs y
+          // guardarBibliotecaPersonal serializa el objeto bib tal cual.
+          NihonCheck.guardarBibliotecaPersonal(bib);
+        }
+      }
+    }
 
     if (!opts.sinRecalibrar) {
       NihonCheck.recalibrarPerfil({
@@ -2568,7 +2610,9 @@
           'role="listitem">' +
           '<span class="leccion-item__estado" aria-hidden="true">' + icono + '</span>' +
           '<span class="leccion-item__info">' +
-            '<span class="leccion-item__titulo">' + (lec.nombre || lec.titulo) + '</span>' +
+            '<span class="leccion-item__titulo">' + (lec.nombre || lec.titulo) +
+              (lec.jlpt ? ' <span class="jlpt-badge">' + lec.jlpt + '</span>' : '') +
+            '</span>' +
             '<span class="leccion-item__meta">' +
               (lec.nivel || 'basico') + ' · ' + estadoVisual.replace(/_/g, ' ') +
               (prog && prog.completada && prog.acierto != null ? ' · ' + prog.acierto + '% verificación' : '') +
@@ -3494,6 +3538,126 @@
     }
   };
 
+  /* ============================================================
+     FASE 0 — Preparación: actividad diaria, estadísticas y SRS
+     Código nuevo aditivo. No modifica funciones existentes ni
+     rompe datos previos en localStorage.
+     Consola: NihonCheck.registrarActividadDiaria()
+              NihonCheck.obtenerEstadisticasGlobales()
+              NihonCheck.migrarBibliotecaParaSRS()
+     ============================================================ */
+
+  /** Clave en localStorage para el registro de días con actividad. */
+  var CLAVE_ACTIVIDAD_DIARIA = 'nihoncheck_actividad_diaria';
+
+  /**
+   * Registra el día actual (YYYY-MM-DD) como día con actividad.
+   * Lee el array existente, añade la fecha si aún no está y lo guarda.
+   * Idempotente: llamar varias veces el mismo día no duplica la fecha.
+   * Devuelve el array de fechas actualizado.
+   */
+  NihonCheck.registrarActividadDiaria = function () {
+    var hoy;
+    try {
+      // Fecha local en formato YYYY-MM-DD
+      var d = new Date();
+      var mes = ('0' + (d.getMonth() + 1)).slice(-2);
+      var dia = ('0' + d.getDate()).slice(-2);
+      hoy = d.getFullYear() + '-' + mes + '-' + dia;
+    } catch (e) {
+      return [];
+    }
+
+    var lista = NihonCheck._leerJSON(CLAVE_ACTIVIDAD_DIARIA, []);
+    if (!Array.isArray(lista)) lista = [];
+
+    if (lista.indexOf(hoy) === -1) {
+      lista.push(hoy);
+      NihonCheck._escribirJSON(CLAVE_ACTIVIDAD_DIARIA, lista);
+    }
+
+    return lista;
+  };
+
+  /** Lee el array de días con actividad (vacío si no hay nada). */
+  NihonCheck.obtenerActividadDiaria = function () {
+    var lista = NihonCheck._leerJSON(CLAVE_ACTIVIDAD_DIARIA, []);
+    return Array.isArray(lista) ? lista : [];
+  };
+
+  /**
+   * Recorre la biblioteca personal y cuenta los elementos por estado visual:
+   * dominado, progreso, reforzar y neutro. Devuelve un objeto con los
+   * contadores y el total. Reutiliza calcularEstadoVisualTarjeta para
+   * mantener coherencia con la UI existente.
+   */
+  NihonCheck.obtenerEstadisticasGlobales = function () {
+    var conteos = { dominado: 0, progreso: 0, reforzar: 0, neutro: 0, total: 0 };
+
+    var items = [];
+    if (NihonCheck.obtenerItemsBibliotecaUnificados) {
+      items = NihonCheck.obtenerItemsBibliotecaUnificados() || [];
+    }
+
+    for (var i = 0; i < items.length; i++) {
+      var estado = NihonCheck.calcularEstadoVisualTarjeta
+        ? NihonCheck.calcularEstadoVisualTarjeta(items[i])
+        : 'neutro';
+      if (conteos[estado] === undefined) estado = 'neutro';
+      conteos[estado] += 1;
+      conteos.total += 1;
+    }
+
+    return conteos;
+  };
+
+  /**
+   * Migración suave para Repetición Espaciada (SRS): añade un objeto `srs`
+   * con valores por defecto seguros a cada elemento de la biblioteca que
+   * todavía no lo tenga. No sobreescribe datos existentes ni elimina campos.
+   * Devuelve el número de elementos migrados (a los que se añadió `srs`).
+   */
+  NihonCheck.migrarBibliotecaParaSRS = function () {
+    // Se lee/escribe el JSON crudo (no vía obtenerBibliotecaPersonal) para
+    // PRESERVAR todos los campos existentes —incluido un srs ya migrado— y
+    // garantizar idempotencia. normalizarItemBiblioteca solo conserva campos
+    // de su lista blanca, por lo que pasar por ahí descartaría `srs`.
+    var bib = NihonCheck._leerJSON(CLAVE_BIBLIOTECA_PERSONAL, null);
+    if (!bib || typeof bib !== 'object') return 0;
+
+    var migrados = 0;
+    var carpetas = CARPETAS_BIBLIOTECA;
+
+    for (var c = 0; c < carpetas.length; c++) {
+      var items = bib[carpetas[c]];
+      if (!Array.isArray(items)) continue;
+
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        if (!item || typeof item !== 'object') continue;
+
+        // Solo añadir si no existe: no rompe datos ya migrados
+        if (!item.srs) {
+          item.srs = {
+            nivel: 0,
+            proximoRepaso: null,
+            ultimoRepaso: null,
+            rachaAciertos: 0,
+          };
+          migrados += 1;
+        }
+      }
+    }
+
+    if (migrados > 0) {
+      NihonCheck._escribirJSON(CLAVE_BIBLIOTECA_PERSONAL, bib);
+    }
+
+    return migrados;
+  };
+
   window.NihonCheck = NihonCheck;
 
 })();
+
+

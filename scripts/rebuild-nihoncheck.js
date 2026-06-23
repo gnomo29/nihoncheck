@@ -35,3 +35,5 @@ const out = [
 
 fs.writeFileSync(filePath, out, 'utf8');
 console.log('Written', out.split('\n').length, 'lines');
+
+
